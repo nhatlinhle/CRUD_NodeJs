@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game</title>
+</head>
+
+<body>
+  <div id="renderList"></div>
+</body>
+
+</html>
+
+<script>
+  (function () {
+    function shuffle(a) {
+      var j, x, i;
+      for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+      }
+      return a;
+    }
+
+    function sortCard(obj) {
+      return obj.sort((a, b) => {
+        if (a.rankIndex == b.rankIndex) {
+          return a.suitIndex - b.suitIndex;
+        }
+        return a.rankIndex > b.rankIndex ? 1 : -1;
+      })
+    }
+
+    function printCardToPlayers(params) {
+      const ul = document.createElement('ul');
+      document.getElementById('renderList').appendChild(ul);
+
+      params.forEach((e, i) => {
+        const li = document.createElement('li');
+        const playerIndex = i + 1;
+        ul.appendChild(li);
+        li.innerHTML = `Player ${playerIndex}: ` + e.toString();
+      })
+    }
+
+    const deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
+    const faces = ['♠', '♣', '♦', '♥'];
+    const cards = [];
+
+    for (var i = 0; i < 52; i++) {
+      cards.push({
+        suitIndex: Math.floor(i / deck.length),
+        suit: faces[Math.floor(i / deck.length)],
+        rankIndex: i % deck.length,
+        rank: deck[i % deck.length]
+      });
+    }
+
+    const shuffledCards = shuffle(cards)
+    const cardMaximunInPlayer = 13;
+    let handleCards = [];
+    let key = 1;
+
+    for (let i = 0; i < shuffledCards.length; i += cardMaximunInPlayer) {
+      let tmp = { [`player${key}`]: shuffledCards.slice(i, i + cardMaximunInPlayer) };
+      handleCards = { ...handleCards, ...tmp }
+      key++;
+    }
+
+    const player1 = sortCard(handleCards.player1).map((e) => { return e.rank + e.suit });
+    const player2 = sortCard(handleCards.player2).map((e) => { return e.rank + e.suit });
+    const player3 = sortCard(handleCards.player3).map((e) => { return e.rank + e.suit });
+    const player4 = sortCard(handleCards.player4).map((e) => { return e.rank + e.suit });
+
+    printCardToPlayers([player1, player2, player3, player4]);
+  })();
+</script>
